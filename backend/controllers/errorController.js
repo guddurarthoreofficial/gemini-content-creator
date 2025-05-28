@@ -1,0 +1,5 @@
+const errorController = () =>{
+
+}
+
+export {errorController}

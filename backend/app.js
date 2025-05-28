@@ -1,18 +1,37 @@
 import express from "express";
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import cors from "cors";
 import dotenv from "dotenv";
 
-dotenv.config(); // Load .env before using process.env 
-import {generateContent} from './service/geminiService.js'
+import { conversationRouter } from "./routers/conversationRouter.js";
+import { errorController } from "./controllers/errorController.js";
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 
-app.get("/", (req, res) => {
-  res.send("hello");
-});
+// Middleware
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
-// console.log(process.env.GEMINI_API_KEY)
-// generateContent("Do you know  guddu singh rathore youtuber ")
+// Routes
+app.use("/api", conversationRouter);
 
-app.listen(3000, () => {
-  console.log("Server running on http://localhost:3000");
-});
+// Optional Error Handling Middleware
+app.use(errorController);
+
+// MongoDB Connection
+mongoose
+  .connect(process.env.MONGO_DB_URL)
+  .then(() => {
+    console.log("✅ Connected to MongoDB");
+    app.listen(3000, () => {
+      console.log("Server running on http://localhost:3000");
+    });
+  })
+  .catch((err) => {
+    console.error(" MongoDB connection error:", err);
+  });
