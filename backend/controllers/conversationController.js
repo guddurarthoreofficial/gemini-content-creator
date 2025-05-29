@@ -1,5 +1,15 @@
 import Conversation from "../models/Conversation.js";
-import { generateContent } from "../service/geminiService.js";
+import { generateContent,generateTitle } from "../service/geminiService.js";
+
+const getConversations = async (req, res, next) => {
+  try {
+    const conversations = await Conversation.find();
+    res.json(conversations);
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 const newConversation = async (req, res, next) => {
   const { prompt, model = "gemini-1.5-flash" } = req.body;
@@ -10,15 +20,16 @@ const newConversation = async (req, res, next) => {
 
   try {
     const content = await generateContent(prompt);
-
-    const conversation = new Conversation({
-      title: prompt,
-      model,
-      messages: [
+     const messages =  [
         { role: "user", content: prompt },
         { role: "assistant", content },
-      ],
-    });
+      ];
+
+      const title =  await generateTitle(messages);
+      console.log("tiltle: " , title);
+
+
+    const conversation = new Conversation({title, model, messages});
 
     await conversation.save();
     res.status(201).json(conversation);
@@ -50,4 +61,23 @@ const newMessage = async (req, res, next) => {
   res.json(conversation);
 };
 
-export { newConversation, newMessage };
+
+const deleteConversation = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const deletedConversation = await Conversation.findByIdAndDelete(id);
+
+    if (!deletedConversation) {
+      return res.status(404).json({ message: "Conversation not found" });
+    }
+
+    res.status(204).send(); // No content response for successful deletion
+  } catch (error) {
+    next(error); // Pass error to the error-handling middleware
+  }
+};
+
+
+
+export { newConversation, newMessage, getConversations, deleteConversation};
