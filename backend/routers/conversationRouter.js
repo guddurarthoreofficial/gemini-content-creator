@@ -1,8 +1,10 @@
 import express from "express";
-import { newConversation } from "../controllers/conversationController.js"; // Correct named import
+import { newConversation,newMessage } from "../controllers/conversationController.js"; // Correct named import
 
 const conversationRouter = express.Router();
 
-conversationRouter.post("/conversation", newConversation); // Fixed router usage and function name
+conversationRouter.post("/conversation", newConversation);
+
+conversationRouter.put("/conversation/:id", newMessage);
 
 export { conversationRouter };
