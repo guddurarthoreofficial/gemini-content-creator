@@ -10,7 +10,7 @@ function App() {
   return (
     <BrowserRouter>
       <ChatProvider>
-        <div className='nin-h-screen bg-gray-100 py-8'>
+        <div className='nin-h-screen bg-gray-100 '>
           <Routes>
             <Route path="/" element={<ChatLayout />} >
               <Route path="/" element={<Chat />} />
