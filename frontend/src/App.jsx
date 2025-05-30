@@ -1,18 +1,25 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Routes, Route, Link, BrowserRouter } from 'react-router-dom';
 import './App.css'
+import ChatLayout from './layout/ChatLayout';
+import Chat from './components/Chat';
+import { ChatProvider } from './store/ChatContex';
+
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <h1 class="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-
-    </>
+    <BrowserRouter>
+      <ChatProvider>
+        <div className='nin-h-screen bg-gray-100 py-8'>
+          <Routes>
+            <Route path="/" element={<ChatLayout />} >
+              <Route path="/" element={<Chat />} />
+              <Route path="/conversation/:id" element={<Chat />} />
+            </Route>
+          </Routes>
+        </div>
+      </ChatProvider>
+    </BrowserRouter>
   )
 }
 
